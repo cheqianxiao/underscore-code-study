@@ -11,10 +11,14 @@
   // Establish the root object, `window` (`self`) in the browser, `global`
   // on the server, or `this` in some virtual machines. We use `self`
   // instead of `window` for `WebWorker` support.
-  var root = typeof self == 'object' && self.self === self && self ||
-            typeof global == 'object' && global.global === global && global ||
-            this ||
-            {};
+  var root = typeof self == 'object' 
+            && self.self === self 
+            && self 
+            || typeof global == 'object' 
+            && global.global === global 
+            && global 
+            || this 
+            || {};
 
   // Save the previous value of the `_` variable.
   var previousUnderscore = root._;
@@ -24,6 +28,7 @@
   var SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;
 
   // Create quick reference variables for speed access to core prototypes.
+  //减少原型查找
   var push = ArrayProto.push,
       slice = ArrayProto.slice,
       toString = ObjProto.toString,
@@ -31,6 +36,7 @@
 
   // All **ECMAScript 5** native function implementations that we hope to use
   // are declared here.
+  //使用到的es5函数
   var nativeIsArray = Array.isArray,
       nativeKeys = Object.keys,
       nativeCreate = Object.create;
@@ -38,7 +44,8 @@
   // Naked function reference for surrogate-prototype-swapping.
   var Ctor = function(){};
 
-  // Create a safe reference to the Underscore object for use below.
+  // Create a safe reference to the Underscore object for use below.  
+  //为下面会用到的Underscore这个对象 创建一个安全的引用？
   var _ = function(obj) {
     if (obj instanceof _) return obj;
     if (!(this instanceof _)) return new _(obj);
@@ -51,11 +58,13 @@
   // (`nodeType` is checked to ensure that `module`
   // and `exports` are not HTML elements.)
   if (typeof exports != 'undefined' && !exports.nodeType) {
+    //node环境
     if (typeof module != 'undefined' && !module.nodeType && module.exports) {
       exports = module.exports = _;
     }
     exports._ = _;
   } else {
+    //浏览器环境
     root._ = _;
   }
 

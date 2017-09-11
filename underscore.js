@@ -151,6 +151,7 @@
   };
 
   var shallowProperty = function(key) {
+    //返回一个方法  这个方法返回对象对应key的value
     return function(obj) {
       return obj == null ? void 0 : obj[key];
     };
@@ -166,11 +167,13 @@
   };
 
   // Helper for collection methods to determine whether a collection
-  // should be iterated as an array or as an object.
+  // should be iterated as an array or as an object.  
+  //判断是按对象遍历还是按数组遍历时要用到 
   // Related: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength
   // Avoids a very nasty iOS 8 JIT bug on ARM-64. #2094
-  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
-  var getLength = shallowProperty('length');
+  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1; 
+  var getLength = shallowProperty('length');  
+  //只要有length属性且为Number类型，就被认为是类数组
   var isArrayLike = function(collection) {
     var length = getLength(collection);
     return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
@@ -181,15 +184,18 @@
 
   // The cornerstone, an `each` implementation, aka `forEach`.
   // Handles raw objects in addition to array-likes. Treats all
-  // sparse array-likes as if they were dense.
+  // sparse array-likes as if they were dense.  
+  //处理原生对象和类数组对象 把所有稀疏数组当密集数组处理
   _.each = _.forEach = function(obj, iteratee, context) {
     iteratee = optimizeCb(iteratee, context);
     var i, length;
     if (isArrayLike(obj)) {
+      //类数组对象 像遍历数组一样遍历
       for (i = 0, length = obj.length; i < length; i++) {
         iteratee(obj[i], i, obj);
       }
     } else {
+      //原生对象 遍历key value  
       var keys = _.keys(obj);
       for (i = 0, length = keys.length; i < length; i++) {
         iteratee(obj[keys[i]], keys[i], obj);
@@ -198,7 +204,8 @@
     return obj;
   };
 
-  // Return the results of applying the iteratee to each element.
+  // Return the results of applying the iteratee to each element. 
+  //对每个元素执行一次iteratee函数得到的结果 
   _.map = _.collect = function(obj, iteratee, context) {
     iteratee = cb(iteratee, context);
     var keys = !isArrayLike(obj) && _.keys(obj),
@@ -211,7 +218,7 @@
     return results;
   };
 
-  // Create a reducing function iterating left or right.
+  // Create a reducing function iterating left or right.  
   var createReduce = function(dir) {
     // Wrap code that reassigns argument variables in a separate function than
     // the one that accesses `arguments.length` to avoid a perf hit. (#1991)
@@ -273,6 +280,7 @@
     var keys = !isArrayLike(obj) && _.keys(obj),
         length = (keys || obj).length;
     for (var index = 0; index < length; index++) {
+      //数组按索引遍历 对象按key遍历
       var currentKey = keys ? keys[index] : index;
       if (!predicate(obj[currentKey], currentKey, obj)) return false;
     }
@@ -294,6 +302,7 @@
 
   // Determine if the array or object contains a given item (using `===`).
   // Aliased as `includes` and `include`.
+  //判断对象或数组是否包含指定的item  
   _.contains = _.includes = _.include = function(obj, item, fromIndex, guard) {
     if (!isArrayLike(obj)) obj = _.values(obj);
     if (typeof fromIndex != 'number' || guard) fromIndex = 0;

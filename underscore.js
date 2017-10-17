@@ -74,6 +74,7 @@
   // Internal function that returns an efficient (for current engines) version
   // of the passed-in callback, to be repeatedly applied in other Underscore
   // functions.
+  //优化了的回调函数  
   var optimizeCb = function(func, context, argCount) {
     if (context === void 0) return func;
     switch (argCount) {
@@ -82,6 +83,7 @@
       };
       // The 2-parameter case has been omitted only because no current consumers
       // made use of it.
+      //没有用到两个参数的情况
       case null:
       case 3: return function(value, index, collection) {
         return func.call(context, value, index, collection);
@@ -100,7 +102,7 @@
   // An internal function to generate callbacks that can be applied to each
   // element in a collection, returning the desired result — either `identity`,
   // an arbitrary callback, a property matcher, or a property accessor.
-  
+
   var cb = function(value, context, argCount) {
     if (_.iteratee !== builtinIteratee) return _.iteratee(value, context);
     if (value == null) return _.identity;
@@ -690,6 +692,8 @@
 
   // Use a comparator function to figure out the smallest index at which
   // an object should be inserted so as to maintain order. Uses binary search.
+  // _.sortedIndex([10, 20, 30, 40, 50], 35);
+  //使用二分法查找要插入有序数组中的元素的位置
   _.sortedIndex = function(array, obj, iteratee, context) {
     iteratee = cb(iteratee, context, 1);
     var value = iteratee(obj);
@@ -703,6 +707,8 @@
 
   // Generator function to create the indexOf and lastIndexOf functions.
   var createIndexFinder = function(dir, predicateFind, sortedIndex) {
+    //_.findIndex(array, predicate, [context]) 
+    //_.findLastIndex(array, predicate, [context]) 
     return function(array, item, idx) {
       var i = 0, length = getLength(array);
       if (typeof idx == 'number') {

@@ -100,6 +100,7 @@
   // An internal function to generate callbacks that can be applied to each
   // element in a collection, returning the desired result — either `identity`,
   // an arbitrary callback, a property matcher, or a property accessor.
+  
   var cb = function(value, context, argCount) {
     if (_.iteratee !== builtinIteratee) return _.iteratee(value, context);
     if (value == null) return _.identity;
@@ -670,12 +671,15 @@
   // Generator function to create the findIndex and findLastIndex functions.
   var createPredicateIndexFinder = function(dir) {
     return function(array, predicate, context) {
+      // 返回一个函数 dir决定查找方向
       predicate = cb(predicate, context);
       var length = getLength(array);
       var index = dir > 0 ? 0 : length - 1;
       for (; index >= 0 && index < length; index += dir) {
+        // 如果满足条件
         if (predicate(array[index], index, array)) return index;
       }
+      // 没找到则返回-1
       return -1;
     };
   };

@@ -693,7 +693,7 @@
   // Use a comparator function to figure out the smallest index at which
   // an object should be inserted so as to maintain order. Uses binary search.
   // _.sortedIndex([10, 20, 30, 40, 50], 35);
-  //使用二分法查找要插入有序数组中的元素的位置
+  //使用二分法查找要插入有序数组中的元素的位置  有序 正序
   _.sortedIndex = function(array, obj, iteratee, context) {
     iteratee = cb(iteratee, context, 1);
     var value = iteratee(obj);
@@ -707,26 +707,31 @@
 
   // Generator function to create the indexOf and lastIndexOf functions.
   var createIndexFinder = function(dir, predicateFind, sortedIndex) {
-    //_.findIndex(array, predicate, [context]) 
-    //_.findLastIndex(array, predicate, [context]) 
     return function(array, item, idx) {
+       // _.indexOf(array, value, [isSorted]) 
       var i = 0, length = getLength(array);
       if (typeof idx == 'number') {
+        //第三个参数是个数字 表示从这个位置开始查找  
         if (dir > 0) {
+          //顺序
           i = idx >= 0 ? idx : Math.max(idx + length, i);
         } else {
+          //逆序 
           length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
         }
       } else if (sortedIndex && idx && length) {
+        //第三个参数是个布尔值 表示数组是否有序 按二分法查找
         idx = sortedIndex(array, item);
         return array[idx] === item ? idx : -1;
       }
+      //找NaN
       if (item !== item) {
         idx = predicateFind(slice.call(array, i, length), _.isNaN);
         return idx >= 0 ? idx + i : -1;
       }
       for (idx = dir > 0 ? i : length - 1; idx >= 0 && idx < length; idx += dir) {
         if (array[idx] === item) return idx;
+        //why not return array[idx] === item ? idx : -1;
       }
       return -1;
     };
@@ -736,8 +741,14 @@
   // or -1 if the item is not included in the array.
   // If the array is large and already in sort order, pass `true`
   // for **isSorted** to use binary search.
-  _.indexOf = createIndexFinder(1, _.findIndex, _.sortedIndex);
-  _.lastIndexOf = createIndexFinder(-1, _.findLastIndex);
+  _.indexOf = createIndexFinder(1, _.findIndex, _.sortedIndex);   
+  // _.indexOf(array, value, [isSorted]) 
+  //注意第三个参数， 可以是布尔值，表示数组是否有序，也可以是一个数字，表示从这个索引之后开始查找
+  //_.findIndex和 _.IndexOf的用法区别:  第二个参数不同，前者是个校验函数，后者是元素。
+
+  _.lastIndexOf = createIndexFinder(-1, _.findLastIndex);  
+  //没有提供第三个参数 因为sortedIndex函数并不针对逆序？ 但用法中表示可以使用二分法
+  //_.lastIndexOf(array, value, [fromIndex=array.length-1])
 
   // Generate an integer Array containing an arithmetic progression. A port of
   // the native Python `range()` function. See
